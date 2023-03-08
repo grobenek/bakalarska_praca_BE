@@ -2,6 +2,7 @@ package szathmary.peter.bakalarka.service.implementation;
 
 import java.util.List;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 import szathmary.peter.bakalarka.entity.User;
 import szathmary.peter.bakalarka.exception.UserAlreadyRegisteredException;
 import szathmary.peter.bakalarka.exception.UserNotFoundException;
@@ -9,6 +10,7 @@ import szathmary.peter.bakalarka.exception.WrongPasswordException;
 import szathmary.peter.bakalarka.repository.UserRepository;
 import szathmary.peter.bakalarka.service.UserService;
 
+@Service
 public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
