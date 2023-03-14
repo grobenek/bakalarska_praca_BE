@@ -34,12 +34,12 @@ public class User {
   @NotBlank(message = "First name cannot be blank")
   @NotNull(message = "Last name cannot be null")
   @Column(name = "first_name", nullable = false)
-  private String firstName;
+  private String firstname;
 
   @NotBlank(message = "Last name cannot be blank")
   @NotNull(message = "Last name cannot be null")
   @Column(name = "last_name", nullable = false)
-  private String lastName;
+  private String lastname;
 
   @NotBlank(message = "Email cannot be blank")
   @NotNull(message = "Email cannot be null")
@@ -52,8 +52,8 @@ public class User {
   public User(String username, String password, String firstName, String lastName, String email) {
     this.username = username;
     this.password = password;
-    this.firstName = firstName;
-    this.lastName = lastName;
+    this.firstname = firstName;
+    this.lastname = lastName;
     this.email = email;
   }
 }

@@ -1,6 +1,7 @@
 package szathmary.peter.bakalarka.service.implementation;
 
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import szathmary.peter.bakalarka.entity.User;
@@ -10,6 +11,7 @@ import szathmary.peter.bakalarka.exception.WrongPasswordException;
 import szathmary.peter.bakalarka.repository.UserRepository;
 import szathmary.peter.bakalarka.service.UserService;
 
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -39,13 +41,20 @@ public class UserServiceImpl implements UserService {
   @Override
   public User registerUser(User pUser) throws UserAlreadyRegisteredException {
 
-    if (this.userRepository.findByEmail(pUser.getEmail()) == null) {
+    log.info(pUser.toString());
+
+    if (this.userRepository.findByEmail(pUser.getEmail()) != null) {
       throw new UserAlreadyRegisteredException(
           "User with email " + pUser.getEmail() + " is already registered");
     }
 
-    User user = User.builder().username(pUser.getUsername()).firstName(pUser.getFirstName())
-        .lastName(pUser.getLastName()).email(pUser.getEmail())
+    if (this.userRepository.findByUsername(pUser.getUsername()) != null) {
+      throw new UserAlreadyRegisteredException(
+          "User with username " + pUser.getUsername() + " is already registered");
+    }
+
+    User user = User.builder().username(pUser.getUsername()).firstName(pUser.getFirstname())
+        .lastName(pUser.getLastname()).email(pUser.getEmail())
         .password(this.passwordEncoder.encode(pUser.getPassword())).build();
 
     return this.userRepository.save(user);
@@ -53,10 +62,10 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public Boolean verifyUser(User user) throws UserNotFoundException {
-    User userFromDatabase = this.userRepository.findByEmail(user.getEmail());
+    User userFromDatabase = this.userRepository.findByUsername(user.getUsername());
 
     if (userFromDatabase == null) {
-      throw new UserNotFoundException("User with email " + user.getEmail() + " was not found");
+      throw new UserNotFoundException("User with email " + user.getUsername() + " was not found");
     }
 
     return this.passwordEncoder.matches(user.getPassword(), userFromDatabase.getPassword());
