@@ -5,6 +5,7 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import szathmary.peter.bakalarka.entity.Temperature;
+import szathmary.peter.bakalarka.exception.NoDataFound;
 import szathmary.peter.bakalarka.repository.TemperatureRepository;
 import szathmary.peter.bakalarka.service.TemperatureService;
 
@@ -31,5 +32,16 @@ public class TemperatureServiceImpl implements TemperatureService {
   @Override
   public List<Temperature> getTemperaturesSince(Instant since) {
     return this.temperatureRepository.getTemperaturesSince(since);
+  }
+
+  @Override
+  public Temperature getLastTemperature() throws NoDataFound {
+
+    return this.temperatureRepository.getLastTemperature();
+  }
+
+  @Override
+  public List<List<Temperature>> getGroupedMinMaxMean(Instant startDay, Instant endDay) {
+    return this.temperatureRepository.findGroupedMinMaxMean(startDay, endDay);
   }
 }
