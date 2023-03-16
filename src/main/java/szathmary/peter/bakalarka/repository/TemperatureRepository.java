@@ -93,19 +93,19 @@ public class TemperatureRepository {
     String minQuery = "from(bucket: \"" + BUCKET_NAME + "\")"
         + " |> range(start: " + startDate + ", stop: " + endDate + ")"
         + " |> filter(fn: (r) => r._measurement == \"temperature\")"
-        + " |> aggregateWindow(every: " + windowDuration + ", fn: min, createEmpty: true)"
+        + " |> aggregateWindow(every: " + windowDuration + ", fn: min, createEmpty: false)"
         + " |> yield(name: \"min\")";
 
     String maxQuery = "from(bucket: \"" + BUCKET_NAME + "\")"
         + " |> range(start: " + startDate + ", stop: " + endDate + ")"
         + " |> filter(fn: (r) => r._measurement == \"temperature\")"
-        + " |> aggregateWindow(every: " + windowDuration + ", fn: min, createEmpty: true)"
+        + " |> aggregateWindow(every: " + windowDuration + ", fn: max, createEmpty: false)"
         + " |> yield(name: \"max\")";
 
     String meanQuery = "from(bucket: \"" + BUCKET_NAME + "\")"
         + " |> range(start: " + startDate + ", stop: " + endDate + ")"
         + " |> filter(fn: (r) => r._measurement == \"temperature\")"
-        + " |> aggregateWindow(every: " + windowDuration + ", fn: min, createEmpty: true)"
+        + " |> aggregateWindow(every: " + windowDuration + ", fn: mean, createEmpty: false)"
         + " |> yield(name: \"mean\")";
 
 

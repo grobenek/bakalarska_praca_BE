@@ -119,9 +119,9 @@ public class TemperatureController {
         .meanTemperatures(groupedTemperaturesDto.get(2)).build();
 
     log.info("Min: {}, Max: {}, Mean: {} temperatures returned in TemperatureController",
-        temperatureMinMaxMeanDto.getMinTemperatures(),
-        temperatureMinMaxMeanDto.getMaxTemperatures(),
-        temperatureMinMaxMeanDto.getMeanTemperatures());
+        temperatureMinMaxMeanDto.getMinTemperatures().size(),
+        temperatureMinMaxMeanDto.getMaxTemperatures().size(),
+        temperatureMinMaxMeanDto.getMeanTemperatures().size());
 
     return ResponseEntity.ok().body(temperatureMinMaxMeanDto);
   }
