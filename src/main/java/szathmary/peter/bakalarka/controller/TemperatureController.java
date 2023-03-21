@@ -31,7 +31,7 @@ public class TemperatureController {
   private final DecimalFormat decimalFormat;
 
   @Autowired
-  public TemperatureController(TemperatureServiceImpl temperatureService) {
+  public TemperatureController(TemperatureService temperatureService) {
     this.temperatureService = temperatureService;
     this.decimalFormat = new DecimalFormat("#.##");
     this.decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
@@ -103,14 +103,36 @@ public class TemperatureController {
 
   @RequestMapping(path = "/grouped/between/{startDate}/{endDate}", method = RequestMethod.GET)
   public ResponseEntity<TemperatureMinMaxMeanDto> getGroupedTemperatureBetweenDate(
-      @PathVariable @NotNull Instant startDate, @PathVariable @NotNull Instant endDate) {
+      @PathVariable @NotNull Instant startDate, @PathVariable @NotNull Instant endDate)
+      throws NoDataFound {
     log.info("Group temperatures between {} and {} requested in TemperatureController", startDate,
         endDate);
 
     List<List<Temperature>> groupedTemperatures = this.temperatureService.getGroupedMinMaxMean(
         startDate, endDate);
 
-    List<List<TemperatureDto>> groupedTemperaturesDto = groupedTemperatures.stream()
+    return this.mapToMinMaxMeanTemperatureDto(groupedTemperatures);
+  }
+
+  @RequestMapping(path = "/{starDate}", method = RequestMethod.GET)
+  public ResponseEntity<TemperatureMinMaxMeanDto> getAllTemperaturesFromDate(
+      @PathVariable @NotNull Instant starDate) throws NoDataFound {
+    log.info("getAllTemperaturesFromDate requester in TemperatureControleer");
+
+    List<List<Temperature>> temperatures = this.temperatureService.getAllTemperaturesFromDate(starDate);
+
+    return this.mapToMinMaxMeanTemperatureDto(temperatures);
+  }
+
+  @NotNull
+  private ResponseEntity<TemperatureMinMaxMeanDto> mapToMinMaxMeanTemperatureDto(
+      List<List<Temperature>> temperatures) throws NoDataFound {
+
+    if (temperatures == null) {
+      throw new NoDataFound("No data found for to aggregate");
+    }
+
+    List<List<TemperatureDto>> groupedTemperaturesDto = temperatures.stream()
         .map(list -> list.stream().map(TemperatureMapper::toDto).toList()).toList();
 
     TemperatureMinMaxMeanDto temperatureMinMaxMeanDto = TemperatureMinMaxMeanDto.builder()

@@ -41,7 +41,19 @@ public class TemperatureServiceImpl implements TemperatureService {
   }
 
   @Override
-  public List<List<Temperature>> getGroupedMinMaxMean(Instant startDay, Instant endDay) {
-    return this.temperatureRepository.findGroupedMinMaxMean(startDay, endDay);
+  public List<List<Temperature>> getGroupedMinMaxMean(Instant startDate, Instant endDate) {
+    if (startDate.equals(endDate)) {
+      return this.getAllTemperaturesFromDate(startDate);
+    }
+
+    return this.temperatureRepository.findGroupedMinMaxMean(startDate, endDate);
+  }
+
+  @Override
+  public List<List<Temperature>> getAllTemperaturesFromDate(Instant startDate) {
+    Instant startOfDay = startDate.truncatedTo(java.time.temporal.ChronoUnit.DAYS);
+    Instant endOfDate = startOfDay.plus(java.time.Duration.ofDays(1));
+
+    return this.temperatureRepository.findGroupedMinMaxMean(startOfDay, endOfDate);
   }
 }

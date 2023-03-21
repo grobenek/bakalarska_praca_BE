@@ -14,5 +14,6 @@ public interface TemperatureService {
 
   Temperature getLastTemperature() throws NoDataFound;
 
-  List<List<Temperature>> getGroupedMinMaxMean(Instant startDay, Instant endDay);
+  List<List<Temperature>> getGroupedMinMaxMean(Instant startDate, Instant endDate);
+  List<List<Temperature>> getAllTemperaturesFromDate(Instant startDate);
 }
