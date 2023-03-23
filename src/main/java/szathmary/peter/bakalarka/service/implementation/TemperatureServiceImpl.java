@@ -30,8 +30,14 @@ public class TemperatureServiceImpl implements TemperatureService {
   }
 
   @Override
-  public List<Temperature> getTemperaturesSince(Instant since) {
-    return this.temperatureRepository.getTemperaturesSince(since);
+  public List<List<Temperature>> getTemperaturesSince(Instant since) {
+    Instant endDate = Instant.now();
+
+    if (since.equals(endDate)) {
+      return getAllTemperaturesFromDate(since);
+    }
+
+    return temperatureRepository.findGroupedMinMaxMean(since, endDate);
   }
 
   @Override
@@ -55,5 +61,15 @@ public class TemperatureServiceImpl implements TemperatureService {
     Instant endOfDate = startOfDay.plus(java.time.Duration.ofDays(1));
 
     return this.temperatureRepository.findGroupedMinMaxMean(startOfDay, endOfDate);
+  }
+
+  @Override
+  public void saveTemperatures(List<Temperature> temperaturesToSave) {
+    this.temperatureRepository.saveAll(temperaturesToSave);
+  }
+
+  @Override
+  public void saveTemperature(Temperature temperatureToSave) {
+    this.temperatureRepository.save(temperatureToSave);
   }
 }

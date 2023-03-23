@@ -4,21 +4,23 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import szathmary.peter.bakalarka.dto.TemperatureDto;
 import szathmary.peter.bakalarka.dto.TemperatureMinMaxMeanDto;
 import szathmary.peter.bakalarka.entity.Temperature;
 import szathmary.peter.bakalarka.exception.NoDataFound;
 import szathmary.peter.bakalarka.service.TemperatureService;
-import szathmary.peter.bakalarka.service.implementation.TemperatureServiceImpl;
 import szathmary.peter.bakalarka.util.mapper.TemperatureMapper;
 
 @Slf4j
@@ -37,7 +39,7 @@ public class TemperatureController {
     this.decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
   }
 
-  @RequestMapping(method = RequestMethod.GET)
+  @GetMapping
   public ResponseEntity<List<TemperatureDto>> getAllTemperatures() {
     log.info("getAllTemperatures requestedin TemperatureController");
 
@@ -51,7 +53,7 @@ public class TemperatureController {
     return ResponseEntity.ok().body(temperatureDtos);
   }
 
-  @RequestMapping(path = "/between/{startDate}/{endDate}", method = RequestMethod.GET)
+  @GetMapping(path = "/between/{startDate}/{endDate}")
   public ResponseEntity<List<TemperatureDto>> getAllTemperaturesBetweenDates(
       @PathVariable @NotNull Instant startDate, @PathVariable @NotNull Instant endDate) {
     log.info("All temperatures between Date {} and {} requested in TemperatureController",
@@ -69,23 +71,44 @@ public class TemperatureController {
     return ResponseEntity.ok().body(temperatureDtos);
   }
 
-  @RequestMapping(path = "since/{timestamp}", method = RequestMethod.GET)
-  public ResponseEntity<List<TemperatureDto>> getTemperaturesSince(
-      @PathVariable @NotNull Instant timestamp) {
+  @GetMapping(path = "since/{timestamp}")
+  public ResponseEntity<TemperatureMinMaxMeanDto> getTemperaturesSince(
+      @PathVariable @NotNull Instant timestamp) throws NoDataFound {
     log.info("All tempereatures since {} requested in TemperatureController", timestamp);
 
-    List<Temperature> temperatureList = this.temperatureService.getTemperaturesSince(timestamp);
+    List<List<Temperature>> temperatures = this.temperatureService.getTemperaturesSince(timestamp);
 
-    List<TemperatureDto> temperatureDtos = temperatureList.stream().map(TemperatureMapper::toDto)
-        .toList();
-
-    log.info("{} temperatures since {} returned in TemperatureController", temperatureDtos.size(),
-        timestamp);
-
-    return ResponseEntity.ok().body(temperatureDtos);
+    return this.mapToMinMaxMeanTemperatureDto(temperatures);
   }
 
-  @RequestMapping(path = "/last", method = RequestMethod.GET)
+  @PostMapping
+  public ResponseEntity<Void> addTemperatures(@RequestBody List<TemperatureDto> temperatureDtos) {
+    log.info("Adding {} temperatures in TemperatureController", temperatureDtos.size());
+
+    List<Temperature> temperatures = temperatureDtos.stream().map(TemperatureMapper::toEntity)
+        .collect(Collectors.toList());
+
+    this.temperatureService.saveTemperatures(temperatures);
+
+    log.info("{} temperatures added in TemperatureController", temperatures.size());
+
+    return ResponseEntity.ok().build();
+  }
+
+  @PostMapping("/single")
+  public ResponseEntity<Void> addTemperature(@RequestBody TemperatureDto temperatureDto) {
+    log.info("Adding one temperature {} in TemperatureController", temperatureDto.getTemperature());
+
+    Temperature temperature = TemperatureMapper.toEntity(temperatureDto);
+    temperatureService.saveTemperature(temperature);
+
+    log.info("Temperature {} added in TemperatureController", temperatureDto.getTemperature());
+
+    return ResponseEntity.ok().build();
+  }
+
+
+  @GetMapping(path = "/last")
   public ResponseEntity<TemperatureDto> getLastTemperature() throws NoDataFound {
     log.info("Last temperature requester in TemperatureController");
 
@@ -101,7 +124,7 @@ public class TemperatureController {
     return ResponseEntity.ok().body(temperatureDto);
   }
 
-  @RequestMapping(path = "/grouped/between/{startDate}/{endDate}", method = RequestMethod.GET)
+  @GetMapping(path = "/grouped/between/{startDate}/{endDate}")
   public ResponseEntity<TemperatureMinMaxMeanDto> getGroupedTemperatureBetweenDate(
       @PathVariable @NotNull Instant startDate, @PathVariable @NotNull Instant endDate)
       throws NoDataFound {
@@ -114,12 +137,13 @@ public class TemperatureController {
     return this.mapToMinMaxMeanTemperatureDto(groupedTemperatures);
   }
 
-  @RequestMapping(path = "/{starDate}", method = RequestMethod.GET)
+  @GetMapping(path = "/{starDate}")
   public ResponseEntity<TemperatureMinMaxMeanDto> getAllTemperaturesFromDate(
       @PathVariable @NotNull Instant starDate) throws NoDataFound {
     log.info("getAllTemperaturesFromDate requester in TemperatureControleer");
 
-    List<List<Temperature>> temperatures = this.temperatureService.getAllTemperaturesFromDate(starDate);
+    List<List<Temperature>> temperatures = this.temperatureService.getAllTemperaturesFromDate(
+        starDate);
 
     return this.mapToMinMaxMeanTemperatureDto(temperatures);
   }

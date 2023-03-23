@@ -9,4 +9,4 @@ influxdb:
   bucket: temperature
   org: ${INFLUX_DB_ORG}
   logging:
-    enabled: false
+    enabled: true

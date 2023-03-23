@@ -1,15 +1,19 @@
 package szathmary.peter.bakalarka.repository;
 
+import com.influxdb.LogLevel;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.QueryApi;
+import com.influxdb.client.WriteApi;
+import com.influxdb.client.domain.WritePrecision;
+import com.influxdb.client.write.Point;
 import com.influxdb.exceptions.BadRequestException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.client.HttpClientErrorException.BadRequest;
 import szathmary.peter.bakalarka.entity.Temperature;
 import szathmary.peter.bakalarka.exception.NoDataFound;
 
@@ -18,13 +22,25 @@ import szathmary.peter.bakalarka.exception.NoDataFound;
 public class TemperatureRepository {
 
   private final InfluxDBClient influxDBClient;
+
+  private final WriteApi writeApi;
   @Value("${influxdb.bucket}")
-  private final String BUCKET_NAME = "temperature";
+  private String BUCKET_NAME;
   @Value("${influxdb.org}")
-  private final String ORGANIZATION = "Bakalarka";
+  private String ORGANIZATION;
+  @Value("${influxdb.logging.enabled}")
+  private boolean influxLoggingEnabled;
 
   public TemperatureRepository(InfluxDBClient influxDBClient) {
     this.influxDBClient = influxDBClient;
+    this.writeApi = this.influxDBClient.makeWriteApi();
+  }
+
+  @PostConstruct
+  public void init() {
+    if (this.influxLoggingEnabled) {
+      this.influxDBClient.setLogLevel(LogLevel.BASIC);
+    }
   }
 
   public List<Temperature> findAll() {
@@ -41,10 +57,10 @@ public class TemperatureRepository {
 
   public List<Temperature> findAllBetweenDate(Instant startDate, Instant endDate) {
     String query = String.format("""
-            from(bucket: "%1$s")
-              |> range(start: %2$s, stop: %3$s)
-              |> filter(fn: (r) => r._measurement == "temperature")""", BUCKET_NAME, startDate,
-        endDate);
+        from(bucket: "%1$s")
+          |> range(start: %2$s, stop: %3$s)
+          |> filter(fn: (r) => r._measurement == "temperature")
+          |> sort(columns:["_time"])""", BUCKET_NAME, startDate, endDate);
 
     QueryApi queryApi = this.influxDBClient.getQueryApi();
 
@@ -69,6 +85,7 @@ public class TemperatureRepository {
         from(bucket: "%1$s")
            |> range(start: 0)
            |> filter(fn: (r) => r._measurement == "temperature")
+           |> sort(columns:["_time"])
            |> last()
          """, BUCKET_NAME);
 
@@ -113,12 +130,9 @@ public class TemperatureRepository {
     List<Temperature> maxTemperatureList;
     List<Temperature> meanTemperatureList;
     try {
-      minTemperatureList = queryApi.query(minQuery, ORGANIZATION,
-          Temperature.class);
-      maxTemperatureList = queryApi.query(maxQuery, ORGANIZATION,
-          Temperature.class);
-      meanTemperatureList = queryApi.query(meanQuery, ORGANIZATION,
-          Temperature.class);
+      minTemperatureList = queryApi.query(minQuery, ORGANIZATION, Temperature.class);
+      maxTemperatureList = queryApi.query(maxQuery, ORGANIZATION, Temperature.class);
+      meanTemperatureList = queryApi.query(meanQuery, ORGANIZATION, Temperature.class);
     } catch (BadRequestException e) {
       log.error("No data found to aggregate in findGroupedMinMaxMean between {} and {}", startDate,
           endDate);
@@ -132,4 +146,44 @@ public class TemperatureRepository {
 
     return listOfLists;
   }
+
+  public void save(Temperature temperature) {
+    // time cannot be in future
+    Instant currentUtcTime = Instant.now();
+    if (temperature.getTime().isAfter(currentUtcTime)) {
+      log.info("{} is after now ({} in UTC) timestamp, replacing it with {}", temperature.getTime(),
+          currentUtcTime, currentUtcTime);
+      temperature.setTime(currentUtcTime);
+    }
+
+    Point pointToSave = Point.measurement("temperature")
+        .addField("value", temperature.getTemperature())
+        .time(temperature.getTime().getEpochSecond(), WritePrecision.S);
+
+    this.writeApi.writePoint(BUCKET_NAME, ORGANIZATION, pointToSave);
+    this.writeApi.flush();
+  }
+
+  public void saveAll(List<Temperature> temperatures) {
+    List<Point> points = new ArrayList<>();
+    Instant currentUtcTime = Instant.now();
+
+    for (Temperature temperature : temperatures) {
+
+      if (temperature.getTime().isAfter(currentUtcTime)) {
+        log.info("{} is after now ({} in UTC) timestamp, replacing it with {}",
+            temperature.getTime(), currentUtcTime, currentUtcTime);
+        temperature.setTime(currentUtcTime);
+      }
+
+      Point pointToSave = Point.measurement("temperature")
+          .addField("value", temperature.getTemperature())
+          .time(temperature.getTime().getEpochSecond(), WritePrecision.S);
+      points.add(pointToSave);
+    }
+
+    writeApi.writePoints(points);
+    writeApi.flush();
+  }
+
 }
