@@ -9,17 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import szathmary.peter.bakalarka.entity.Voltage;
-import szathmary.peter.bakalarka.repository.abstractInfluxDbRepository.BaseInfluxDbRepository;
+import szathmary.peter.bakalarka.repository.abstractInfluxDbRepository.BaseInfluxDbElectricRepository;
 
 @Slf4j
 @Repository
-public class VoltageRepository extends BaseInfluxDbRepository<Voltage> {
+public class VoltageElectricRepository extends BaseInfluxDbElectricRepository<Voltage> {
 
   @Value("${influxdb.org}")
   private String ORGANIZATION;
 
   @Autowired
-  public VoltageRepository(InfluxDBClient influxDBClient,
+  public VoltageElectricRepository(InfluxDBClient influxDBClient,
       @Value("${influxdb.bucket.electric}") String bucketName,
       @Value("${influxdb.org}") String organization) {
     super(influxDBClient, "voltage", bucketName, organization);

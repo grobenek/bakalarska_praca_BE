@@ -8,13 +8,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import szathmary.peter.bakalarka.entity.GridFrequency;
-import szathmary.peter.bakalarka.repository.abstractInfluxDbRepository.BaseInfluxDbRepository;
+import szathmary.peter.bakalarka.repository.abstractInfluxDbRepository.BaseInfluxDbElectricRepository;
 
 @Slf4j
 @Repository
-public class GridFrequencyRepository extends BaseInfluxDbRepository<GridFrequency> {
+public class GridFrequencyElectricRepository extends BaseInfluxDbElectricRepository<GridFrequency> {
 
-  public GridFrequencyRepository(InfluxDBClient influxDBClient,
+  public GridFrequencyElectricRepository(InfluxDBClient influxDBClient,
       @Value("${influxdb.bucket.electric}") String bucketName,
       @Value("${influxdb.org}") String organization) {
     super(influxDBClient, "gridFrequency", bucketName, organization);

@@ -8,13 +8,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import szathmary.peter.bakalarka.entity.Current;
-import szathmary.peter.bakalarka.repository.abstractInfluxDbRepository.BaseInfluxDbRepository;
+import szathmary.peter.bakalarka.repository.abstractInfluxDbRepository.BaseInfluxDbElectricRepository;
 
 @Slf4j
 @Repository
-public class CurrentRepository extends BaseInfluxDbRepository<Current> {
+public class CurrentElectricRepository extends BaseInfluxDbElectricRepository<Current> {
 
-  public CurrentRepository(InfluxDBClient influxDBClient,
+  public CurrentElectricRepository(InfluxDBClient influxDBClient,
       @Value("${influxdb.bucket.electric}") String bucketName,
       @Value("${influxdb.org}") String organization) {
     super(influxDBClient, "current", bucketName, organization);
