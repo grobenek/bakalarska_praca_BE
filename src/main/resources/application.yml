@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: ${MYSQL_BAKALARKA_URL}
+    username: ${MYSQL_BAKALARKA_USERNAME}
+    password: ${MYSQL_BAKALARKA_PASSWORD}
+influxdb:
+  url: ${INFLUX_DB_URL}
+  token: ${INFLUX_DB_TOKEN}
+  bucket: temperature
+  org: ${INFLUX_DB_ORG}
+  logging:
+    enabled: false
