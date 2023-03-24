@@ -26,7 +26,7 @@ public class TemperatureServiceImpl implements TemperatureService {
 
   @Override
   public List<Temperature> findAllBetweenDate(Instant startDate, Instant endDate) {
-    return this.temperatureRepository.findAllBetweenDate(startDate, endDate);
+    return this.temperatureRepository.findAllBetweenDates(startDate, endDate);
   }
 
   @Override
@@ -43,7 +43,7 @@ public class TemperatureServiceImpl implements TemperatureService {
   @Override
   public Temperature getLastTemperature() throws NoDataFound {
 
-    return this.temperatureRepository.getLastTemperature();
+    return this.temperatureRepository.getLast();
   }
 
   @Override
