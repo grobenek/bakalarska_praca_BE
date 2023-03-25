@@ -26,9 +26,9 @@ public abstract class BaseInfluxDbElectricRepository<T> {
 
   protected final String QUANTITY_NAME;
 
-  protected final String BUCKET_NAME;
+  private final String BUCKET_NAME;
 
-  protected final String ORGANIZATION;
+  private final String ORGANIZATION;
 
   @Value("${influxdb.logging.enabled}")
   private boolean influxLoggingEnabled;
@@ -108,23 +108,22 @@ public abstract class BaseInfluxDbElectricRepository<T> {
     return result.get(0);
   }
 
-  public List<List<T>> getGroupedMinMaxMean(Instant startDate, Instant endDate,
-      List<ElectricPhase> phases) {
+  public List<List<T>> getGroupedMinMaxMean(Instant startDate, Instant endDate, List<ElectricPhase> phases) {
     long timeRangeMillis = endDate.toEpochMilli() - startDate.toEpochMilli();
     long windowDurationMillis = timeRangeMillis / 400;
     String windowDuration = windowDurationMillis + "ms";
 
-    String minQuery = "from(bucket: \"%s\") |> range(start: %s, stop: %s) |> filter(fn: (r) => r._measurement == \"%s\"%s) |> aggregateWindow(every: %s, fn: min, createEmpty: false) |> sort(columns:[\"_time\"]) |> yield(name: \"min\")".formatted(
-        BUCKET_NAME, startDate, endDate, QUANTITY_NAME, generatePhaseFilter(phases),
-        windowDuration);
+    String subquery = String.format("""
+        from(bucket: "%s")
+          |> range(start: %s, stop: %s)
+          |> filter(fn: (r) => r._measurement == "%s"%s)
+          |> aggregateWindow(every: %s, createEmpty: false)
+          |> sort(columns:["_time"])""", BUCKET_NAME, startDate, endDate, QUANTITY_NAME,
+        generatePhaseFilter(phases), windowDuration);
 
-    String maxQuery = "from(bucket: \"%s\") |> range(start: %s, stop: %s) |> filter(fn: (r) => r._measurement == \"%s\"%s) |> aggregateWindow(every: %s, fn: max, createEmpty: false) |> sort(columns:[\"_time\"]) |> yield(name: \"max\")".formatted(
-        BUCKET_NAME, startDate, endDate, QUANTITY_NAME, generatePhaseFilter(phases),
-        windowDuration);
-
-    String meanQuery = "from(bucket: \"%s\") |> range(start: %s, stop: %s) |> filter(fn: (r) => r._measurement == \"%s\"%s) |> aggregateWindow(every: %s, fn: mean, createEmpty: false) |> sort(columns:[\"_time\"]) |> yield(name: \"mean\")".formatted(
-        BUCKET_NAME, startDate, endDate, QUANTITY_NAME, generatePhaseFilter(phases),
-        windowDuration);
+    String minQuery = subquery + " |> min() |> yield(name: \"min\")";
+    String maxQuery = subquery + " |> max() |> yield(name: \"max\")";
+    String meanQuery = subquery + " |> mean() |> yield(name: \"mean\")";
 
     QueryApi queryApi = this.influxDBClient.getQueryApi();
 
@@ -148,6 +147,7 @@ public abstract class BaseInfluxDbElectricRepository<T> {
 
     return listOfLists;
   }
+
 
   public void save(T t) {
     // time cannot be in future

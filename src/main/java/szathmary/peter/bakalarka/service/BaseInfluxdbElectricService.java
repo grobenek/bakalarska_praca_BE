@@ -2,9 +2,11 @@ package szathmary.peter.bakalarka.service;
 
 import java.time.Instant;
 import java.util.List;
+import org.springframework.data.repository.NoRepositoryBean;
 import szathmary.peter.bakalarka.constant.ElectricPhase;
 import szathmary.peter.bakalarka.exception.NoDataFound;
 
+@NoRepositoryBean
 public interface BaseInfluxdbElectricService<T> {
 
   List<T> findAll(List<ElectricPhase> phases);
@@ -15,7 +17,8 @@ public interface BaseInfluxdbElectricService<T> {
 
   T getLastValue(List<ElectricPhase> phases) throws NoDataFound;
 
-  List<List<T>> getGroupedMinMaxMean(Instant startDate, Instant endDate, List<ElectricPhase> phases);
+  List<List<T>> getGroupedMinMaxMean(Instant startDate, Instant endDate,
+      List<ElectricPhase> phases);
 
   List<List<T>> getAllValuesFromDate(Instant startDate, List<ElectricPhase> phases);
 
