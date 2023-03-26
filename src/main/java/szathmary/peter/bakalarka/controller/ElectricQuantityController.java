@@ -47,16 +47,18 @@ public class ElectricQuantityController {
 
   @GetMapping("/selected")
   public ResponseEntity<ElectricQuantitiesDto> findSelected(
-      @RequestBody ElectricQuantitiesRequestDto electricQuantitiesRequestDto)
+      @RequestParam List<ElectricQuantities> electricQuantities,
+      @RequestParam(required = false) List<ElectricPhase> currentPhaseFilters,
+      @RequestParam(required = false) List<ElectricPhase> voltagePhaseFilters)
       throws InvalidElectricQuantityException {
 
     List<Current> currents = new ArrayList<>();
     List<GridFrequency> gridFrequencies = new ArrayList<>();
     List<Voltage> voltages = new ArrayList<>();
 
-    processElectricQuantities(electricQuantitiesRequestDto.getElectricQuantities(),
-        electricQuantitiesRequestDto.getCurrentPhaseFilters(),
-        electricQuantitiesRequestDto.getVoltagePhaseFilters(),
+    processElectricQuantities(electricQuantities,
+        currentPhaseFilters,
+        voltagePhaseFilters,
         (quantity, phaseFilters) -> currents.addAll(currentService.findAll(phaseFilters)),
         quantity -> gridFrequencies.addAll(gridFrequencyService.findAll(null)),
         (quantity, phaseFilters) -> voltages.addAll(voltageService.findAll(phaseFilters)));
