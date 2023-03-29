@@ -19,7 +19,6 @@ import szathmary.peter.bakalarka.constant.ElectricPhase;
 import szathmary.peter.bakalarka.constant.ElectricQuantities;
 import szathmary.peter.bakalarka.dto.electric.ElectricQuantitiesDto;
 import szathmary.peter.bakalarka.dto.electric.ElectricQuantitiesMinMaxMeanResponseDto;
-import szathmary.peter.bakalarka.dto.electric.ElectricQuantitiesRequestDto;
 import szathmary.peter.bakalarka.entity.Current;
 import szathmary.peter.bakalarka.entity.GridFrequency;
 import szathmary.peter.bakalarka.entity.Voltage;
@@ -51,21 +50,21 @@ public class ElectricQuantityController {
       @RequestParam(required = false) List<ElectricPhase> currentPhaseFilters,
       @RequestParam(required = false) List<ElectricPhase> voltagePhaseFilters)
       throws InvalidElectricQuantityException {
+    log.info("All electric quantities: {} with Current phases: {} and Voltage phases: {} requested",
+        electricQuantities.toString(), currentPhaseFilters.toString(),
+        voltagePhaseFilters.toString());
 
     List<Current> currents = new ArrayList<>();
     List<GridFrequency> gridFrequencies = new ArrayList<>();
     List<Voltage> voltages = new ArrayList<>();
 
-    processElectricQuantities(electricQuantities,
-        currentPhaseFilters,
-        voltagePhaseFilters,
+    processElectricQuantities(electricQuantities, currentPhaseFilters, voltagePhaseFilters,
         (quantity, phaseFilters) -> currents.addAll(currentService.findAll(phaseFilters)),
         quantity -> gridFrequencies.addAll(gridFrequencyService.findAll(null)),
         (quantity, phaseFilters) -> voltages.addAll(voltageService.findAll(phaseFilters)));
 
     return ResponseEntity.ok().body(new ElectricQuantitiesDto(currents, gridFrequencies, voltages));
   }
-
 
   @GetMapping(path = "/between/{startDate}/{endDate}")
   public ResponseEntity<ElectricQuantitiesDto> getAllElectricQuantitiesBetweenDates(
@@ -75,7 +74,9 @@ public class ElectricQuantityController {
       @RequestParam(required = false) List<ElectricPhase> voltagePhaseFilters)
       throws InvalidElectricQuantityException {
 
-    log.info("All Electric quantities: {} requested between dates {} and {}", electricQuantities,
+    log.info(
+        "All Electric quantities: {} with Current phases: {} and Voltage phases: {} requested between dates {} and {}",
+        electricQuantities, currentPhaseFilters.toString(), voltagePhaseFilters.toString(),
         startDate, endDate);
 
     List<Current> currents = new ArrayList<>();
@@ -121,6 +122,9 @@ public class ElectricQuantityController {
       @RequestParam(required = false) List<ElectricPhase> currentPhaseFilters,
       @RequestParam(required = false) List<ElectricPhase> voltagePhaseFilters)
       throws InvalidElectricQuantityException {
+
+    log.info("Last value of {} with phases {} and {} requested", electricQuantities,
+        currentPhaseFilters, voltagePhaseFilters);
 
     ArrayList<Current> currents = new ArrayList<>();
     ArrayList<GridFrequency> gridFrequencies = new ArrayList<>();
@@ -213,12 +217,15 @@ public class ElectricQuantityController {
         electricQuantitiesRequestDto.getVoltages().size());
 
     if (!electricQuantitiesRequestDto.getCurrents().isEmpty()) {
+      log.info("Currents: {}", electricQuantitiesRequestDto.getCurrents());
       this.currentService.saveValues(electricQuantitiesRequestDto.getCurrents());
     }
     if (!electricQuantitiesRequestDto.getGridFrequencies().isEmpty()) {
+      log.info("Grid frequencies: {}", electricQuantitiesRequestDto.getGridFrequencies());
       this.gridFrequencyService.saveValues(electricQuantitiesRequestDto.getGridFrequencies());
     }
     if (!electricQuantitiesRequestDto.getVoltages().isEmpty()) {
+      log.info("Voltages: {}", electricQuantitiesRequestDto.getVoltages());
       this.voltageService.saveValues(electricQuantitiesRequestDto.getVoltages());
     }
 
@@ -229,11 +236,25 @@ public class ElectricQuantityController {
   private ResponseEntity<ElectricQuantitiesMinMaxMeanResponseDto> createElectricQuantitiesMinMaxMeanResponseDto(
       List<List<Current>> currents, List<List<GridFrequency>> gridFrequencies,
       List<List<Voltage>> voltages) {
-    ElectricQuantitiesMinMaxMeanResponseDto electricQuantitiesMinMaxMeanResponseDto = ElectricQuantitiesMinMaxMeanResponseDto.builder()
-        .minCurrents(currents.get(0)).meanCurrents(currents.get(1)).maxCurrents(currents.get(2))
-        .minGridFrequencies(gridFrequencies.get(0)).meanGridFrequencies(gridFrequencies.get(1))
-        .maxGridFrequencies(gridFrequencies.get(2)).minVoltages(voltages.get(0))
-        .meanVoltages(voltages.get(1)).maxVoltages(voltages.get(2)).build();
+    ElectricQuantitiesMinMaxMeanResponseDto electricQuantitiesMinMaxMeanResponseDto = new ElectricQuantitiesMinMaxMeanResponseDto();
+
+    if (!currents.isEmpty()) {
+      electricQuantitiesMinMaxMeanResponseDto.setMinCurrents(currents.get(0));
+      electricQuantitiesMinMaxMeanResponseDto.setMeanCurrents(currents.get(1));
+      electricQuantitiesMinMaxMeanResponseDto.setMaxCurrents(currents.get(2));
+    }
+
+    if (!voltages.isEmpty()) {
+      electricQuantitiesMinMaxMeanResponseDto.setMinVoltages(voltages.get(0));
+      electricQuantitiesMinMaxMeanResponseDto.setMeanVoltages(voltages.get(1));
+      electricQuantitiesMinMaxMeanResponseDto.setMaxVoltages(voltages.get(2));
+    }
+
+    if (!gridFrequencies.isEmpty()) {
+      electricQuantitiesMinMaxMeanResponseDto.setMinGridFrequencies(gridFrequencies.get(0));
+      electricQuantitiesMinMaxMeanResponseDto.setMeanGridFrequencies(gridFrequencies.get(1));
+      electricQuantitiesMinMaxMeanResponseDto.setMaxGridFrequencies(gridFrequencies.get(2));
+    }
 
     return ResponseEntity.ok().body(electricQuantitiesMinMaxMeanResponseDto);
   }

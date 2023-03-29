@@ -114,16 +114,16 @@ public abstract class BaseInfluxDbElectricRepository<T> {
     String windowDuration = windowDurationMillis + "ms";
 
     String subquery = String.format("""
-        from(bucket: "%s")
-          |> range(start: %s, stop: %s)
-          |> filter(fn: (r) => r._measurement == "%s"%s)
-          |> aggregateWindow(every: %s, createEmpty: false)
-          |> sort(columns:["_time"])""", BUCKET_NAME, startDate, endDate, QUANTITY_NAME,
-        generatePhaseFilter(phases), windowDuration);
+    from(bucket: "%s")
+      |> range(start: %s, stop: %s)
+      |> filter(fn: (r) => r._measurement == "%s"%s)
+      |> aggregateWindow(every: %s, fn: %s, createEmpty: false)
+      |> sort(columns:["_time"])""", BUCKET_NAME, startDate, endDate, QUANTITY_NAME,
+        generatePhaseFilter(phases), windowDuration, "%s");
 
-    String minQuery = subquery + " |> min() |> yield(name: \"min\")";
-    String maxQuery = subquery + " |> max() |> yield(name: \"max\")";
-    String meanQuery = subquery + " |> mean() |> yield(name: \"mean\")";
+    String minQuery = String.format(subquery, "min") + " |> yield(name: \"min\")";
+    String maxQuery = String.format(subquery, "max") + " |> yield(name: \"max\")";
+    String meanQuery = String.format(subquery, "mean") + " |> yield(name: \"mean\")";
 
     QueryApi queryApi = this.influxDBClient.getQueryApi();
 
@@ -135,8 +135,8 @@ public abstract class BaseInfluxDbElectricRepository<T> {
       maxTemperatureList = queryApi.query(maxQuery, ORGANIZATION, this.getEntityClass());
       meanTemperatureList = queryApi.query(meanQuery, ORGANIZATION, this.getEntityClass());
     } catch (BadRequestException e) {
-      log.error("No data found to aggregate in findGroupedMinMaxMean between {} and {}", startDate,
-          endDate);
+      log.error("No data found to aggregate in findGroupedMinMaxMean between {} and {}\n Error message: {}", startDate,
+          endDate, e.getMessage());
       return null;
     }
 
@@ -168,7 +168,7 @@ public abstract class BaseInfluxDbElectricRepository<T> {
       points.add(pointToSave);
     }
 
-    writeApi.writePoints(points);
+    writeApi.writePoints(this.BUCKET_NAME, this.ORGANIZATION, points);
     writeApi.flush();
   }
 

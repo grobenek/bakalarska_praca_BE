@@ -1,9 +1,11 @@
 package szathmary.peter.bakalarka.repository;
 
+import com.influxdb.LogLevel;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
 import java.time.Instant;
+import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -18,7 +20,6 @@ public class CurrentElectricRepository extends BaseInfluxDbElectricRepository<Cu
       @Value("${influxdb.bucket.electric}") String bucketName,
       @Value("${influxdb.org}") String organization) {
     super(influxDBClient, "current", bucketName, organization);
-
   }
 
   @Override
