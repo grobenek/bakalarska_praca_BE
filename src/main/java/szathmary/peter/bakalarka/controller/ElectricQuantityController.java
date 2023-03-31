@@ -165,7 +165,9 @@ public class ElectricQuantityController {
       @RequestParam(required = false) List<ElectricPhase> voltagePhaseFilters)
       throws InvalidElectricQuantityException {
 
-    log.info("All Electric quantities : {} requested between {} and {}", electricQuantities,
+    log.info(
+        "All Electric quantities : {} with currentPhases: {} and voltagePhases: {} requested between {} and {}",
+        electricQuantities, currentPhaseFilters, voltagePhaseFilters,
         startDate, endDate);
 
     List<List<Current>> currents = new ArrayList<>();
