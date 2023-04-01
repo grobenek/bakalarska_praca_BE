@@ -11,4 +11,4 @@ influxdb:
     electric: electric
   org: ${INFLUX_DB_ORG}
   logging:
-    enabled: true
+    enabled: false

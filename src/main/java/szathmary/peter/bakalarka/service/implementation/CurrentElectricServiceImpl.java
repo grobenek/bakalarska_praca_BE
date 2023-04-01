@@ -63,7 +63,12 @@ public class CurrentElectricServiceImpl implements CurrentElectricService {
     return this.currentRepository.getGroupedMinMaxMean(startOfDay, endOfDate, phases);
   }
 
-  @Override
+    @Override
+    public List<Current> getLastNData(int count, List<ElectricPhase> phases) {
+        return this.currentRepository.getLastNValues(phases, count);
+    }
+
+    @Override
   public void saveValue(Current valueToSave) {
     this.currentRepository.save(valueToSave);
   }

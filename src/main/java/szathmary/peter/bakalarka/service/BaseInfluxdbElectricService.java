@@ -22,6 +22,8 @@ public interface BaseInfluxdbElectricService<T> {
 
   List<List<T>> getAllValuesFromDate(Instant startDate, List<ElectricPhase> phases);
 
+  List<T> getLastNData(int count, List<ElectricPhase> phases);
+
   void saveValue(T valueToSave);
 
   void saveValues(List<T> valuesToSave);

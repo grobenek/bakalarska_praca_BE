@@ -63,7 +63,12 @@ public class VoltageElectricServiceImpl implements VoltageElectricService {
     return this.voltageRepository.getGroupedMinMaxMean(startOfDay, endOfDate, phases);
   }
 
-  @Override
+    @Override
+    public List<Voltage> getLastNData(int count, List<ElectricPhase> phases) {
+        return this.voltageRepository.getLastNValues(phases, count);
+    }
+
+    @Override
   public void saveValue(Voltage valueToSave) {
     this.voltageRepository.save(valueToSave);
   }

@@ -64,7 +64,12 @@ public class GridFrequencyElectricServiceImpl implements GridFrequencyElectricSe
     return this.gridFrequencyRepository.getGroupedMinMaxMean(startOfDay, endOfDate, phases);
   }
 
-  @Override
+    @Override
+    public List<GridFrequency> getLastNData(int count, List<ElectricPhase> phases) {
+        return this.gridFrequencyRepository.getLastNValues(null, count);
+    }
+
+    @Override
   public void saveValue(GridFrequency valueToSave) {
     this.gridFrequencyRepository.save(valueToSave);
   }
