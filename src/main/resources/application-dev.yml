@@ -6,7 +6,9 @@ spring:
 influxdb:
   url: ${INFLUX_DB_URL}
   token: ${INFLUX_DB_TOKEN}
-  bucket: temperature
+  bucket:
+    temperature: temperature
+    electric: electric
   org: ${INFLUX_DB_ORG}
   logging:
-    enabled: true
+    enabled: false

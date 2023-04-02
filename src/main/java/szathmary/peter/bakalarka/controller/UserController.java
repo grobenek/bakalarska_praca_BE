@@ -1,16 +1,10 @@
 package szathmary.peter.bakalarka.controller;
 
-import java.util.List;
-import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import szathmary.peter.bakalarka.dto.UserDto;
 import szathmary.peter.bakalarka.dto.UserDtoWithPassword;
 import szathmary.peter.bakalarka.dto.UserLoginInformationDto;
@@ -18,6 +12,9 @@ import szathmary.peter.bakalarka.entity.User;
 import szathmary.peter.bakalarka.exception.UserAlreadyRegisteredException;
 import szathmary.peter.bakalarka.exception.UserNotFoundException;
 import szathmary.peter.bakalarka.service.UserService;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @Slf4j
 @RestController
