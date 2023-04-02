@@ -1,6 +1,5 @@
 package szathmary.peter.bakalarka.dto.electric;
 
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,6 +7,8 @@ import lombok.NoArgsConstructor;
 import szathmary.peter.bakalarka.entity.Current;
 import szathmary.peter.bakalarka.entity.GridFrequency;
 import szathmary.peter.bakalarka.entity.Voltage;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor

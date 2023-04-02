@@ -1,9 +1,10 @@
 package szathmary.peter.bakalarka.dto.electric;
 
-import java.util.List;
 import lombok.Data;
 import szathmary.peter.bakalarka.constant.ElectricPhase;
 import szathmary.peter.bakalarka.constant.ElectricQuantities;
+
+import java.util.List;
 
 @Data
 public class ElectricQuantitiesRequestDto {

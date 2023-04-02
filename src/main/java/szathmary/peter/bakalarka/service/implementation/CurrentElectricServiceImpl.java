@@ -1,13 +1,14 @@
 package szathmary.peter.bakalarka.service.implementation;
 
-import java.time.Instant;
-import java.util.List;
 import org.springframework.stereotype.Service;
 import szathmary.peter.bakalarka.constant.ElectricPhase;
 import szathmary.peter.bakalarka.entity.Current;
 import szathmary.peter.bakalarka.exception.NoDataFound;
 import szathmary.peter.bakalarka.repository.CurrentElectricRepository;
 import szathmary.peter.bakalarka.service.CurrentElectricService;
+
+import java.time.Instant;
+import java.util.List;
 
 @Service
 public class CurrentElectricServiceImpl implements CurrentElectricService {

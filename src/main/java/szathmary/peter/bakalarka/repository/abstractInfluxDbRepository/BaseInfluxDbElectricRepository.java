@@ -6,17 +6,16 @@ import com.influxdb.client.QueryApi;
 import com.influxdb.client.WriteApi;
 import com.influxdb.client.write.Point;
 import com.influxdb.exceptions.BadRequestException;
-
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import javax.annotation.PostConstruct;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.NoRepositoryBean;
 import szathmary.peter.bakalarka.constant.ElectricPhase;
 import szathmary.peter.bakalarka.exception.NoDataFound;
+
+import javax.annotation.PostConstruct;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @NoRepositoryBean

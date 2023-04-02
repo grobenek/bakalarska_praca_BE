@@ -1,8 +1,9 @@
 package szathmary.peter.bakalarka.dto.electric;
 
-import java.time.Instant;
 import lombok.Data;
 import szathmary.peter.bakalarka.constant.ElectricQuantities;
+
+import java.time.Instant;
 
 @Data
 public class ElectricQuantityDto {

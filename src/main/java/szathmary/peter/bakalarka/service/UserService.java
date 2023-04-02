@@ -1,10 +1,11 @@
 package szathmary.peter.bakalarka.service;
 
-import java.util.List;
 import szathmary.peter.bakalarka.entity.User;
 import szathmary.peter.bakalarka.exception.UserAlreadyRegisteredException;
 import szathmary.peter.bakalarka.exception.UserNotFoundException;
 import szathmary.peter.bakalarka.exception.WrongPasswordException;
+
+import java.util.List;
 
 public interface UserService {
 

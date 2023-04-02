@@ -1,10 +1,11 @@
 package szathmary.peter.bakalarka.service;
 
-import java.time.Instant;
-import java.util.List;
 import org.springframework.data.repository.NoRepositoryBean;
 import szathmary.peter.bakalarka.constant.ElectricPhase;
 import szathmary.peter.bakalarka.exception.NoDataFound;
+
+import java.time.Instant;
+import java.util.List;
 
 @NoRepositoryBean
 public interface BaseInfluxdbElectricService<T> {

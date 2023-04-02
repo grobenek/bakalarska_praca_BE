@@ -1,16 +1,15 @@
 package szathmary.peter.bakalarka.repository;
 
-import com.influxdb.LogLevel;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
-import java.time.Instant;
-import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import szathmary.peter.bakalarka.entity.Current;
 import szathmary.peter.bakalarka.repository.abstractInfluxDbRepository.BaseInfluxDbElectricRepository;
+
+import java.time.Instant;
 
 @Slf4j
 @Repository
