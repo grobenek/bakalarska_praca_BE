@@ -96,7 +96,7 @@ public class ElectricQuantityController {
     @GetMapping("/last")
     public ResponseEntity<ElectricQuantitiesDto> getLastElectricQuantities(@RequestParam List<ElectricQuantities> electricQuantities, @RequestParam(required = false) List<ElectricPhase> currentPhaseFilters, @RequestParam(required = false) List<ElectricPhase> voltagePhaseFilters) throws InvalidElectricQuantityException {
 
-        log.info("Last value of {} with phases {} and {} requested", electricQuantities, currentPhaseFilters, voltagePhaseFilters);
+        log.info("Last value of {} with current phases {} and voltage phases {} requested", electricQuantities, currentPhaseFilters, voltagePhaseFilters);
 
         ArrayList<Current> currents = new ArrayList<>();
         ArrayList<GridFrequency> gridFrequencies = new ArrayList<>();

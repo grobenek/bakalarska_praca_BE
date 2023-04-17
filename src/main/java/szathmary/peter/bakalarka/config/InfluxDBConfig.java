@@ -15,7 +15,7 @@ public class InfluxDBConfig {
   @Value("${influxdb.token}")
   private String token;
 
-  @Value("${influxdb.bucket.temperature}")
+  @Value("${influxdb.bucket.electric}")
   private String bucket;
 
   @Value("${influxdb.org}")

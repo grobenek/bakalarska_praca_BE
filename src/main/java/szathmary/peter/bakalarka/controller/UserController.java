@@ -12,6 +12,7 @@ import szathmary.peter.bakalarka.entity.User;
 import szathmary.peter.bakalarka.exception.UserAlreadyRegisteredException;
 import szathmary.peter.bakalarka.exception.UserNotFoundException;
 import szathmary.peter.bakalarka.service.UserService;
+import szathmary.peter.bakalarka.util.JwtUtil;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -24,9 +25,11 @@ public class UserController {
 
   private final UserService userService;
   private final ModelMapper modelMapper;
+  private final JwtUtil jwtUtil;
 
-  public UserController(UserService userService) {
+  public UserController(UserService userService, JwtUtil jwtUtil) {
     this.userService = userService;
+    this.jwtUtil = jwtUtil;
     this.modelMapper = new ModelMapper();
   }
 
@@ -37,7 +40,7 @@ public class UserController {
     List<User> userList = this.userService.findAll();
 
     List<UserDto> userDtos = userList.stream()
-        .map(user -> this.modelMapper.map(user, UserDto.class)).toList();
+            .map(user -> this.modelMapper.map(user, UserDto.class)).toList();
 
     log.info("{} users returned in UserController", userDtos.size());
     return ResponseEntity.ok().body(userDtos);
@@ -45,7 +48,7 @@ public class UserController {
 
   @RequestMapping(value = "/register", method = RequestMethod.POST)
   public ResponseEntity<UserDto> registerUser(@RequestBody @Valid UserDtoWithPassword user)
-      throws UserAlreadyRegisteredException {
+          throws UserAlreadyRegisteredException {
     log.info("Register user with login {} requested in UserController", user.getUsername());
 
     log.info(user.toString());
@@ -67,10 +70,11 @@ public class UserController {
     try {
       if (this.userService.verifyUser(userToCheck)) {
         log.info("User with login {} has been successfully verified", user.getUsername());
-        return ResponseEntity.ok().body(true);
+        String jwt = jwtUtil.generateJwt(user.getUsername());
+        return ResponseEntity.ok().header("Authorization", "Bearer " + jwt).body(true);
       } else {
         log.info("User with login {} has not been successfully verified", user.getUsername());
-        return ResponseEntity.ok().body(false);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
       }
     } catch (UserNotFoundException exception) {
       log.info("User with login {} was not found", user.getUsername());
