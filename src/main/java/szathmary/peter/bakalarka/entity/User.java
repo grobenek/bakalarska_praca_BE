@@ -45,7 +45,6 @@ public class User {
   private String email;
 
   @Builder
-
   public User(String username, String password, String firstName, String lastName, String email) {
     this.username = username;
     this.password = password;

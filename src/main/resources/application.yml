@@ -3,11 +3,14 @@ spring:
     url: ${MYSQL_BAKALARKA_URL}
     username: ${MYSQL_BAKALARKA_USERNAME}
     password: ${MYSQL_BAKALARKA_PASSWORD}
+  security:
+    jwt:
+      secret: ${JWT_TOKEN}
+      expiration: 3600000
 influxdb:
   url: ${INFLUX_DB_URL}
   token: ${INFLUX_DB_TOKEN}
   bucket:
-    temperature: temperature
     electric: electric
   org: ${INFLUX_DB_ORG}
   logging:

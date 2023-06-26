@@ -10,10 +10,10 @@
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>szathmary.peter</groupId>
-  <artifactId>bakalarka</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>bakalarka</name>
-  <description>Demo project for Spring Boot</description>
+  <artifactId>bakalarka_szathmary</artifactId>
+  <version>1.0.0</version>
+  <name>bakalarska_praca_szathmary</name>
+  <description>Peter Szathmary - bakalarska praca</description>
   <properties>
     <java.version>17</java.version>
   </properties>
@@ -60,6 +60,23 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-api</artifactId>
+      <version>0.11.5</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-impl</artifactId>
+      <version>0.11.5</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-jackson</artifactId>
+      <version>0.11.5</version>
+      <scope>runtime</scope>
     </dependency>
     <!-- https://mvnrepository.com/artifact/com.influxdb/influxdb-client-java -->
     <dependency>
