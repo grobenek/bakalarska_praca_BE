@@ -25,8 +25,8 @@ public class GridFrequencyElectricServiceImpl implements GridFrequencyElectricSe
   }
 
   @Override
-  public List<GridFrequency> findAllBetweenDate(Instant startDate, Instant endDate,
-      List<ElectricPhase> phases) {
+  public List<GridFrequency> findAllBetweenDate(
+      Instant startDate, Instant endDate, List<ElectricPhase> phases) {
     return this.gridFrequencyRepository.findAllBetweenDates(startDate, endDate, phases);
   }
 
@@ -47,8 +47,8 @@ public class GridFrequencyElectricServiceImpl implements GridFrequencyElectricSe
   }
 
   @Override
-  public List<List<GridFrequency>> getGroupedMinMaxMean(Instant startDate, Instant endDate,
-      List<ElectricPhase> phases) {
+  public List<List<GridFrequency>> getGroupedMinMaxMean(
+      Instant startDate, Instant endDate, List<ElectricPhase> phases) {
     if (startDate.equals(endDate)) {
       return this.getAllValuesFromDate(startDate, phases);
     }
@@ -57,20 +57,20 @@ public class GridFrequencyElectricServiceImpl implements GridFrequencyElectricSe
   }
 
   @Override
-  public List<List<GridFrequency>> getAllValuesFromDate(Instant startDate,
-      List<ElectricPhase> phases) {
+  public List<List<GridFrequency>> getAllValuesFromDate(
+      Instant startDate, List<ElectricPhase> phases) {
     Instant startOfDay = startDate.truncatedTo(java.time.temporal.ChronoUnit.DAYS);
     Instant endOfDate = startOfDay.plus(java.time.Duration.ofDays(1));
 
     return this.gridFrequencyRepository.getGroupedMinMaxMean(startOfDay, endOfDate, phases);
   }
 
-    @Override
-    public List<GridFrequency> getLastNData(int count, List<ElectricPhase> phases) {
-        return this.gridFrequencyRepository.getLastNValues(null, count);
-    }
+  @Override
+  public List<GridFrequency> getLastNData(int count, List<ElectricPhase> phases) {
+    return this.gridFrequencyRepository.getLastNValues(null, count);
+  }
 
-    @Override
+  @Override
   public void saveValue(GridFrequency valueToSave) {
     this.gridFrequencyRepository.save(valueToSave);
   }

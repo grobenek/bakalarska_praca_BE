@@ -54,9 +54,14 @@ public class UserServiceImpl implements UserService {
           "User with username " + pUser.getUsername() + " is already registered");
     }
 
-    User user = User.builder().username(pUser.getUsername()).firstName(pUser.getFirstname())
-        .lastName(pUser.getLastname()).email(pUser.getEmail())
-        .password(this.passwordEncoder.encode(pUser.getPassword())).build();
+    User user =
+        User.builder()
+            .username(pUser.getUsername())
+            .firstName(pUser.getFirstname())
+            .lastName(pUser.getLastname())
+            .email(pUser.getEmail())
+            .password(this.passwordEncoder.encode(pUser.getPassword()))
+            .build();
 
     return this.userRepository.save(user);
   }

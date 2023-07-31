@@ -18,8 +18,8 @@ public interface BaseInfluxdbElectricService<T> {
 
   T getLastValue(List<ElectricPhase> phases) throws NoDataFound;
 
-  List<List<T>> getGroupedMinMaxMean(Instant startDate, Instant endDate,
-      List<ElectricPhase> phases);
+  List<List<T>> getGroupedMinMaxMean(
+      Instant startDate, Instant endDate, List<ElectricPhase> phases);
 
   List<List<T>> getAllValuesFromDate(Instant startDate, List<ElectricPhase> phases);
 

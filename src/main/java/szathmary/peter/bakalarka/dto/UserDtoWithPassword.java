@@ -8,20 +8,9 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class UserDtoWithPassword {
-  @NotNull
-  @NotBlank
-  private String password;
-  @NotNull
-  @NotBlank
-  private String username;
-  @NotNull
-  @NotBlank
-  private String firstname;
-  @NotNull
-  @NotBlank
-  private String lastname;
-  @NotNull
-  @NotBlank
-  @Email
-  private String email;
+  @NotNull @NotBlank private String password;
+  @NotNull @NotBlank private String username;
+  @NotNull @NotBlank private String firstname;
+  @NotNull @NotBlank private String lastname;
+  @NotNull @NotBlank @Email private String email;
 }

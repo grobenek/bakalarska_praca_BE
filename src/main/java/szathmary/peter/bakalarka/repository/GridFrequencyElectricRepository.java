@@ -15,7 +15,8 @@ import java.time.Instant;
 @Repository
 public class GridFrequencyElectricRepository extends BaseInfluxDbElectricRepository<GridFrequency> {
 
-  public GridFrequencyElectricRepository(InfluxDBClient influxDBClient,
+  public GridFrequencyElectricRepository(
+      InfluxDBClient influxDBClient,
       @Value("${influxdb.bucket.electric}") String bucketName,
       @Value("${influxdb.org}") String organization) {
     super(influxDBClient, "gridFrequency", bucketName, organization);
@@ -29,12 +30,16 @@ public class GridFrequencyElectricRepository extends BaseInfluxDbElectricReposit
   @Override
   protected Point generatePointToSave(Instant currentUtcTime, GridFrequency gridFrequency) {
     if (gridFrequency.getTime().isAfter(currentUtcTime)) {
-      log.info("{} is after now ({} in UTC) timestamp, replacing it with {}",
-          gridFrequency.getTime(), currentUtcTime, currentUtcTime);
+      log.info(
+          "{} is after now ({} in UTC) timestamp, replacing it with {}",
+          gridFrequency.getTime(),
+          currentUtcTime,
+          currentUtcTime);
       gridFrequency.setTime(currentUtcTime);
     }
 
-    return Point.measurement(QUANTITY_NAME).addField("value", gridFrequency.getFrequency())
+    return Point.measurement(QUANTITY_NAME)
+        .addField("value", gridFrequency.getFrequency())
         .time(gridFrequency.getTime().getEpochSecond(), WritePrecision.S);
   }
 }

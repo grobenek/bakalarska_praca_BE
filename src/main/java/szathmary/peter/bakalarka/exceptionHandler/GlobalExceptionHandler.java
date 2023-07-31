@@ -12,7 +12,8 @@ import szathmary.peter.bakalarka.exception.UserAlreadyRegisteredException;
 public class GlobalExceptionHandler {
 
   @ExceptionHandler(UserAlreadyRegisteredException.class)
-  public ResponseEntity<String> handleUserAlreadyRegisteredException(UserAlreadyRegisteredException ex) {
+  public ResponseEntity<String> handleUserAlreadyRegisteredException(
+      UserAlreadyRegisteredException ex) {
     return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
   }
 
@@ -22,8 +23,8 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(InvalidElectricQuantityException.class)
-  public ResponseEntity<String> handleInvalidElectricQuantityException(InvalidElectricQuantityException ex) {
+  public ResponseEntity<String> handleInvalidElectricQuantityException(
+      InvalidElectricQuantityException ex) {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
   }
-
 }

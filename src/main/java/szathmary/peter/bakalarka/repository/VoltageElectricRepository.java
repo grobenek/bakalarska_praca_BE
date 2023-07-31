@@ -20,7 +20,8 @@ public class VoltageElectricRepository extends BaseInfluxDbElectricRepository<Vo
   private String ORGANIZATION;
 
   @Autowired
-  public VoltageElectricRepository(InfluxDBClient influxDBClient,
+  public VoltageElectricRepository(
+      InfluxDBClient influxDBClient,
       @Value("${influxdb.bucket.electric}") String bucketName,
       @Value("${influxdb.org}") String organization) {
     super(influxDBClient, "voltage", bucketName, organization);
@@ -34,12 +35,16 @@ public class VoltageElectricRepository extends BaseInfluxDbElectricRepository<Vo
   @Override
   protected Point generatePointToSave(Instant currentUtcTime, Voltage voltage) {
     if (voltage.getTime().isAfter(currentUtcTime)) {
-      log.info("{} is after now ({} in UTC) timestamp, replacing it with {}", voltage.getTime(),
-          currentUtcTime, currentUtcTime);
+      log.info(
+          "{} is after now ({} in UTC) timestamp, replacing it with {}",
+          voltage.getTime(),
+          currentUtcTime,
+          currentUtcTime);
       voltage.setTime(currentUtcTime);
     }
 
-    return Point.measurement(QUANTITY_NAME).addTag("phase", voltage.getPhase().toString())
+    return Point.measurement(QUANTITY_NAME)
+        .addTag("phase", voltage.getPhase().toString())
         .addField("value", voltage.getVoltage())
         .time(voltage.getTime().getEpochSecond(), WritePrecision.S);
   }

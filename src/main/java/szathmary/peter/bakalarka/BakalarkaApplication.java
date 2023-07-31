@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class BakalarkaApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(BakalarkaApplication.class, args);
-	}
-
+  public static void main(String[] args) {
+    SpringApplication.run(BakalarkaApplication.class, args);
+  }
 }

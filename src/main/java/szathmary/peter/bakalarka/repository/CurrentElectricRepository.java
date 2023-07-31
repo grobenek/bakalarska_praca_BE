@@ -15,21 +15,26 @@ import java.time.Instant;
 @Repository
 public class CurrentElectricRepository extends BaseInfluxDbElectricRepository<Current> {
 
-  public CurrentElectricRepository(InfluxDBClient influxDBClient,
+  public CurrentElectricRepository(
+      InfluxDBClient influxDBClient,
       @Value("${influxdb.bucket.electric}") String bucketName,
       @Value("${influxdb.org}") String organization) {
     super(influxDBClient, "current", bucketName, organization);
   }
 
-  @Override 
+  @Override
   protected Point generatePointToSave(Instant currentUtcTime, Current current) {
     if (current.getTime().isAfter(currentUtcTime)) {
-      log.info("{} is after now ({} in UTC) timestamp, replacing it with {}", current.getTime(),
-          currentUtcTime, currentUtcTime);
+      log.info(
+          "{} is after now ({} in UTC) timestamp, replacing it with {}",
+          current.getTime(),
+          currentUtcTime,
+          currentUtcTime);
       current.setTime(currentUtcTime);
     }
 
-    return Point.measurement(QUANTITY_NAME).addTag("phase", current.getPhase().toString())
+    return Point.measurement(QUANTITY_NAME)
+        .addTag("phase", current.getPhase().toString())
         .addField("value", current.getCurrent())
         .time(current.getTime().getEpochSecond(), WritePrecision.S);
   }

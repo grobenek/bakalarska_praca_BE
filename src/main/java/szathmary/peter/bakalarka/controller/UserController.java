@@ -39,8 +39,8 @@ public class UserController {
 
     List<User> userList = this.userService.findAll();
 
-    List<UserDto> userDtos = userList.stream()
-            .map(user -> this.modelMapper.map(user, UserDto.class)).toList();
+    List<UserDto> userDtos =
+        userList.stream().map(user -> this.modelMapper.map(user, UserDto.class)).toList();
 
     log.info("{} users returned in UserController", userDtos.size());
     return ResponseEntity.ok().body(userDtos);
@@ -48,7 +48,7 @@ public class UserController {
 
   @RequestMapping(value = "/register", method = RequestMethod.POST)
   public ResponseEntity<UserDto> registerUser(@RequestBody @Valid UserDtoWithPassword user)
-          throws UserAlreadyRegisteredException {
+      throws UserAlreadyRegisteredException {
     log.info("Register user with login {} requested in UserController", user.getUsername());
 
     log.info(user.toString());

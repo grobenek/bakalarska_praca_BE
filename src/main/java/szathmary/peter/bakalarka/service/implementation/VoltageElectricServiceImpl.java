@@ -25,8 +25,8 @@ public class VoltageElectricServiceImpl implements VoltageElectricService {
   }
 
   @Override
-  public List<Voltage> findAllBetweenDate(Instant startDate, Instant endDate,
-      List<ElectricPhase> phases) {
+  public List<Voltage> findAllBetweenDate(
+      Instant startDate, Instant endDate, List<ElectricPhase> phases) {
     return this.voltageRepository.findAllBetweenDates(startDate, endDate, phases);
   }
 
@@ -47,8 +47,8 @@ public class VoltageElectricServiceImpl implements VoltageElectricService {
   }
 
   @Override
-  public List<List<Voltage>> getGroupedMinMaxMean(Instant startDate, Instant endDate,
-      List<ElectricPhase> phases) {
+  public List<List<Voltage>> getGroupedMinMaxMean(
+      Instant startDate, Instant endDate, List<ElectricPhase> phases) {
     if (startDate.equals(endDate)) {
       return this.getAllValuesFromDate(startDate, phases);
     }
@@ -64,12 +64,12 @@ public class VoltageElectricServiceImpl implements VoltageElectricService {
     return this.voltageRepository.getGroupedMinMaxMean(startOfDay, endOfDate, phases);
   }
 
-    @Override
-    public List<Voltage> getLastNData(int count, List<ElectricPhase> phases) {
-        return this.voltageRepository.getLastNValues(phases, count);
-    }
+  @Override
+  public List<Voltage> getLastNData(int count, List<ElectricPhase> phases) {
+    return this.voltageRepository.getLastNValues(phases, count);
+  }
 
-    @Override
+  @Override
   public void saveValue(Voltage valueToSave) {
     this.voltageRepository.save(valueToSave);
   }
